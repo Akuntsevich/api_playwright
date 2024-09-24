@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as dotenv from 'dotenv';
 
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -13,6 +16,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  timeout: 30000,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -23,8 +27,15 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  testMatch: '**/*.spec.ts',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    headless: false,
+    baseURL: process.env.BASE_URL,
+    httpCredentials: {
+    username: process.env.USER_NAME || 'defaultUsername',
+    password: process.env.USER_PASSWORD || 'defaultPassword',
+    },
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
